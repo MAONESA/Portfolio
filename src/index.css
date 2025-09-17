@@ -11,24 +11,58 @@
 /* ========================
    Global styles
 ======================== */
+::-webkit-scrollbar {
+  display: none;
+}
 html, body, #root {
   height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  scroll-behavior:smooth;
 }
 
+
+
+/* ========================
+   Body
+======================== */
 body {
   @apply bg-black text-white font-sans;
   font-family: 'Inter', sans-serif;
 }
 
+/* ========================
+   Headings
+======================== */
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Poppins', sans-serif;
 }
 
+/* ========================
+   Links
+======================== */
 a {
   @apply text-white hover:text-green-400 transition-colors duration-200;
   text-decoration: none;
 }
 
+/* ========================
+   Layout helpers
+======================== */
 .container {
   @apply max-w-6xl mx-auto px-4;
+}
+
+/* ========================
+   Scroll snap (tipo Issey Miyake)
+======================== */
+main {
+  scroll-snap-type: y mandatory; /* snapping vertical */
+}
+
+section {
+  scroll-snap-align: start; /* cada sección inicia desde arriba */
+  height: 100vh;            /* ocupa toda la pantalla */
 }

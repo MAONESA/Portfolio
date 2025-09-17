@@ -1,34 +1,50 @@
+import Sectiontitle from "../components/Sectiontitle";
 import { motion } from "framer-motion";
+import ScrollDots from "../components/ScrollDots";
 
 function Home() {
-  return (
-    <section className="flex flex-col justify-center items-center text-center min-h-[80vh]">
-      <motion.img
-  src="/profile.jpg" // 👈 ruta directa desde public/
-  alt="David Sandoval"
-  className="w-40 h-40 rounded-full border-4 border-green-400 shadow-lg object-cover"
-  initial={{ scale: 0 }}
-  animate={{ scale: 1 }}
-  transition={{ duration: 0.8, ease: "easeOut" }}
-/>
+  const sections = ["Hero", "Projects", "Skills", "Contact"];
 
-      <motion.h1
-        className="mt-6 text-4xl md:text-5xl font-bold text-green-400"
-        initial={{ y: -50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.5, duration: 0.7 }}
-      >
-        David Sandoval
-      </motion.h1>
-      <motion.p
-        className="mt-4 text-lg text-pink-400"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1, duration: 0.7 }}
-      >
-        Ciberseguridad & Web Developer
-      </motion.p>
-    </section>
+  return (
+    <main className="snap-y snap-mandatory h-screen w-screen overflow-y-scroll overflow-x-hidden">
+      {/* Scroll Dots */}
+      <ScrollDots sections={sections} />
+
+      {/* Hero */}
+      <section className="h-screen w-screen flex flex-col justify-center items-center snap-start">
+        <motion.h1
+          className="text-5xl font-bold text-green-400"
+          initial={{ opacity: 0, y: -50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          David Sandoval
+        </motion.h1>
+        <p className="mt-4 text-pink-400">Ciberseguridad & Web Developer</p>
+      </section>
+
+      {/* Projects */}
+      <section className="h-screen w-screen flex flex-col justify-center items-center bg-gray-900 snap-start">
+        <Sectiontitle title="Proyectos" />
+        <p className="text-gray-300 max-w-xl text-center">
+          Aquí un vistazo rápido a mis proyectos más recientes.
+        </p>
+      </section>
+
+      {/* Skills */}
+      <section className="h-screen w-screen flex flex-col justify-center items-center bg-gray-800 snap-start">
+        <Sectiontitle title="Skills" />
+        <p className="text-gray-300 max-w-xl text-center">
+          Tecnologías y herramientas que domino.
+        </p>
+      </section>
+
+      {/* Contact */}
+      <section className="h-screen w-screen flex flex-col justify-center items-center bg-gray-700 snap-start">
+        <Sectiontitle title="Contacto" />
+        <p className="text-gray-300">¿Quieres hablar conmigo? Escríbeme aquí.</p>
+      </section>
+    </main>
   );
 }
 

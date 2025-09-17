@@ -1,17 +1,17 @@
 import Sectiontitle from "../components/Sectiontitle";
 
-function Projects() {
+function Labs() {
   return (
     <section className="max-w-4xl mx-auto">
       {/* Título de la sección */}
-      <Sectiontitle title="Proyectos" />
+      <Sectiontitle title="Labs" />
 
       {/* Texto de introducción */}
       <p className="text-gray-300 text-center">
-        Aquí encontrarás algunos de mis proyectos destacados.
+        Espacio donde comparto experimentos y laboratorios de pruebas en ciberseguridad.
       </p>
     </section>
   );
 }
 
-export default Projects;
+export default Labs;
