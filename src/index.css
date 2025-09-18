@@ -44,6 +44,10 @@
     /* Sombras con leve glow (neón/cian) */
     --shadow-neon: 0 0 20px color-mix(in oklab, var(--color-neon) 35%, transparent);
     --shadow-cyan: 0 10px 30px -10px color-mix(in oklab, var(--color-cyan) 25%, transparent);
+
+    /* Alturas estándar de cabecera y pie (para safe areas) */
+    --navbar-h: 64px;
+    --footer-h: 56px;
   }
 }
 
@@ -95,16 +99,16 @@ a:hover { color: var(--color-neon); }
 html, body { overscroll-behavior-y: none; }
 
 /* El contenedor que scrollea no propaga el rebote al viewport */
-main { 
+main {
   scroll-snap-type: y mandatory;
   overscroll-behavior: contain;
 }
 
 /* Cada sección ocupa la pantalla y “frena” siempre en su sitio */
-section { 
-  scroll-snap-align: start; 
+section {
+  scroll-snap-align: start;
   scroll-snap-stop: always;
-  height: 100svh; 
+  height: 100svh;
 }
 
 /* Acolchado seguro en iPhone con notch para la última sección */
@@ -148,5 +152,15 @@ section {
       linear-gradient(to bottom, color-mix(in oklab, var(--color-cyan) 10%, transparent) 1px, transparent 1px);
     background-size: 36px 36px;
     background-position: center center;
+  }
+
+  /* ========= Safe areas iOS para nav/footers fijos ========= */
+  /* Compensa la barra superior fija (nav) + notch */
+  .pt-navbar-safe {
+    padding-top: calc(var(--navbar-h) + env(safe-area-inset-top, 0px));
+  }
+  /* Compensa el footer fijo + “home bar” iOS */
+  .pb-footer-safe {
+    padding-bottom: calc(var(--footer-h) + env(safe-area-inset-bottom, 0px));
   }
 }

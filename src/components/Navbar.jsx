@@ -1,8 +1,37 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-function Navbar() {
+function IconMenu({ className = "w-6 h-6" }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor">
+      <path strokeWidth="2" strokeLinecap="round" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+  );
+}
+function IconClose({ className = "w-6 h-6" }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor">
+      <path strokeWidth="2" strokeLinecap="round" d="M6 6l12 12M18 6l-12 12" />
+    </svg>
+  );
+}
+
+export default function Navbar() {
   const { t, i18n } = useTranslation();
+  const [open, setOpen] = useState(false);
+
+  const NavLinks = ({ onClick }) => (
+    <>
+      <Link to="/"          onClick={onClick} className="hover:text-green-400 transition">{t("home")}</Link>
+      <Link to="/projects"  onClick={onClick} className="hover:text-green-400 transition">{t("projects")}</Link>
+      <Link to="/labs"      onClick={onClick} className="hover:text-green-400 transition">{t("labs")}</Link>
+      <Link to="/certifications" onClick={onClick} className="hover:text-green-400 transition">{t("certifications")}</Link>
+      <Link to="/skills"    onClick={onClick} className="hover:text-green-400 transition">{t("skills")}</Link>
+      <Link to="/blog"      onClick={onClick} className="hover:text-green-400 transition">{t("blog")}</Link>
+      <Link to="/contact"   onClick={onClick} className="hover:text-green-400 transition">{t("contact")}</Link>
+    </>
+  );
 
   return (
     <nav className="fixed top-0 left-0 w-full bg-black/60 backdrop-blur-md border-b border-white/10 z-50">
@@ -12,35 +41,68 @@ function Navbar() {
           David Sandoval
         </Link>
 
-        {/* Links */}
+        {/* Desktop links */}
         <div className="hidden md:flex items-center space-x-8 text-sm font-medium">
-          <Link to="/" className="hover:text-green-400 transition">{t("home")}</Link>
-          <Link to="/projects" className="hover:text-green-400 transition">{t("projects")}</Link>
-          <Link to="/labs" className="hover:text-green-400 transition">{t("labs")}</Link>
-          <Link to="/certifications" className="hover:text-green-400 transition">{t("certifications")}</Link>
-          <Link to="/skills" className="hover:text-green-400 transition">{t("skills")}</Link>
-          <Link to="/blog" className="hover:text-green-400 transition">{t("blog")}</Link>
-          <Link to="/contact" className="hover:text-green-400 transition">{t("contact")}</Link>
+          <NavLinks />
         </div>
 
-        {/* Botones de idioma */}
-        <div className="flex space-x-2 ml-4">
+        {/* Idioma (desktop) */}
+        <div className="hidden md:flex space-x-2 ml-4">
           <button
             onClick={() => i18n.changeLanguage("es")}
             className="px-3 py-1 text-xs border border-green-400 text-green-400 rounded-md hover:bg-green-400 hover:text-black transition"
           >
             ES
           </button>
-          {/* <button
+          {/* si quieres EN, destapa: 
+          <button
             onClick={() => i18n.changeLanguage("en")}
             className="px-3 py-1 text-xs border border-green-400 text-green-400 rounded-md hover:bg-green-400 hover:text-black transition"
           >
             EN
           </button> */}
         </div>
+
+        {/* Botón móvil */}
+        <button
+          aria-label="Abrir menú"
+          onClick={() => setOpen(true)}
+          className="md:hidden rounded-md p-2 text-white/90 hover:text-green-400 transition"
+        >
+          <IconMenu />
+        </button>
       </div>
+
+      {/* Panel móvil */}
+      {open && (
+        <div className="md:hidden fixed inset-0 z-[60]">
+          {/* fondo */}
+          <div className="absolute inset-0 bg-black/60" onClick={() => setOpen(false)} />
+          {/* sheet */}
+          <div className="absolute right-0 top-0 h-full w-[min(85vw,320px)] bg-black/80 backdrop-blur-md border-l border-white/10 p-5 flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <span className="text-green-400 font-semibold">Menú</span>
+              <button aria-label="Cerrar menú" onClick={() => setOpen(false)} className="p-2 text-white/90 hover:text-green-400 transition">
+                <IconClose />
+              </button>
+            </div>
+
+            <div className="mt-2 flex flex-col gap-3 text-sm font-medium">
+              <NavLinks onClick={() => setOpen(false)} />
+            </div>
+
+            <div className="mt-auto flex gap-2">
+              <button
+                onClick={() => { i18n.changeLanguage("es"); setOpen(false); }}
+                className="px-3 py-1 text-xs border border-green-400 text-green-400 rounded-md hover:bg-green-400 hover:text-black transition"
+              >
+                ES
+              </button>
+              {/* EN opcional */}
+            </div>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
-
-export default Navbar;
