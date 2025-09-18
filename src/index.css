@@ -27,7 +27,7 @@
 @layer theme {
   @theme {
     /* Colores de tu estética ciber/hacking */
-    --color-base: #0A192F;      /* Azul oscuro para el fondo principal */
+    --color-base: #000000;      /* Azul oscuro para el fondo principal */
     --color-cyan: #00BFFF;      /* Cian/eléctrico para detalles tech */
     --color-neon: #00FF9D;      /* Verde neón para acentos/highlights */
     --color-graphite: #2C2C2C;  /* Gris grafito para paneles/cards */
