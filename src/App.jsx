@@ -1,3 +1,5 @@
+// src/App.jsx
+import { Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
@@ -8,17 +10,18 @@ import Certifications from "./pages/Certifications";
 import Skills from "./pages/Skills";
 import Blog from "./pages/Blog";
 import Contact from "./pages/Contact";
-import { Routes, Route } from "react-router-dom";
 
-// Estructura principal de la app
 function App() {
+  const { pathname } = useLocation();
+  const isHome = pathname === "/";
+
   return (
-    <div className="flex flex-col min-h-screen bg-black text-white font-sans">
-      {/* Navbar fijo arriba */}
+    <div className="flex min-h-screen flex-col bg-black text-white font-sans">
+      {/* Navbar fijo */}
       <Navbar />
 
-      {/* Contenido dinámico según la ruta */}
-      <main className="flex-grow pt-16 px-4">
+      {/* Contenido (sin padding global; cada página decide) */}
+      <main className="flex-grow">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/projects" element={<Projects />} />
@@ -30,7 +33,7 @@ function App() {
         </Routes>
       </main>
 
-      {/* Footer abajo */}
+      {/* Footer global SOLO fuera del Home */}
       <Footer />
     </div>
   );
