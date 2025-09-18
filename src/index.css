@@ -1,68 +1,139 @@
 /* ========================
-   Fonts
+   Fuentes (Google Fonts)
+   - Inter para texto
+   - Poppins para titulares
 ======================== */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@600;700&display=swap');
 
 /* ========================
-   Tailwind base
+   Tailwind base (v4)
+   - Un único import (v4 es "CSS-first")
 ======================== */
 @import "tailwindcss";
 
 /* ========================
-   Global styles
+   Capas opcionales para ordenar estilos
+   - theme: tokens/variables (se convierten en CSS vars)
+   - base: estilos globales
+   - components/utilities: helpers reusables
 ======================== */
-::-webkit-scrollbar {
-  display: none;
-}
-html, body, #root {
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-  scroll-behavior:smooth;
-}
-
-
+@layer theme, base, components, utilities;
 
 /* ========================
-   Body
+   THEME TOKENS (Tailwind v4)
+   - Aquí defines tu paleta y “design tokens”
+   - Se usarán como variables CSS: bg-[--color-base], text-[--color-neon], etc
 ======================== */
-body {
-  @apply bg-black text-white font-sans;
-  font-family: 'Inter', sans-serif;
+@layer theme {
+  @theme {
+    /* Colores de tu estética ciber/hacking */
+    --color-base: #0A192F;      /* Azul oscuro para el fondo principal */
+    --color-cyan: #00BFFF;      /* Cian/eléctrico para detalles tech */
+    --color-neon: #00FF9D;      /* Verde neón para acentos/highlights */
+    --color-graphite: #2C2C2C;  /* Gris grafito para paneles/cards */
+    --color-white: #FFFFFF;     /* Blanco para tipografía */
+
+    /* Tipografías por defecto */
+    --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    --font-display: Poppins, var(--font-sans); /* Titulares */
+
+    /* Radios genéricos para redondeos consistentes */
+    --radius-xl: 1rem;
+    --radius-2xl: 1.25rem;
+
+    /* Sombras con leve glow (neón/cian) */
+    --shadow-neon: 0 0 20px color-mix(in oklab, var(--color-neon) 35%, transparent);
+    --shadow-cyan: 0 10px 30px -10px color-mix(in oklab, var(--color-cyan) 25%, transparent);
+  }
 }
 
 /* ========================
-   Headings
+   ESTILOS GLOBALES (base)
 ======================== */
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Poppins', sans-serif;
+@layer base {
+  :root { color-scheme: dark; }                  /* Indica que el esquema es oscuro (mejor contraste) */
+  html, body, #root { height: 100%; width: 100%; }
+  html { scroll-behavior: smooth; }              /* Scroll suave al navegar por anchors */
+
+  body {
+    @apply text-white font-sans;                 /* Tailwind utilities para tipografía y color */
+    background: var(--color-base);               /* Usa el color base como fondo */
+    font-family: var(--font-sans);               /* Fuente de texto por defecto */
+  }
+
+  /* Titulares con Poppins para aire “premium” */
+  h1, h2, h3, h4, h5, h6 { font-family: var(--font-display); }
 }
+
+/* ========================
+   Scrollbar oculto (multi navegador)
+======================== */
+::-webkit-scrollbar { display: none; }           /* Chrome/Safari */
+* { scrollbar-width: none; }                     /* Firefox */
 
 /* ========================
    Links
+   - Color blanco por defecto
+   - Cambia a neón en hover
 ======================== */
 a {
-  @apply text-white hover:text-green-400 transition-colors duration-200;
-  text-decoration: none;
+  @apply transition-colors duration-200;
+  color: var(--color-white);
 }
+a:hover { color: var(--color-neon); }
 
 /* ========================
-   Layout helpers
+   Helpers de layout
+   - Contenedor centrado con máximo ancho
 ======================== */
-.container {
-  @apply max-w-6xl mx-auto px-4;
-}
+.container { @apply max-w-6xl mx-auto px-4; }
 
 /* ========================
-   Scroll snap (tipo Issey Miyake)
+   Scroll Snap
+   - `main` define el “snap” vertical obligatorio
+   - Cada `section` ocupa toda la altura visible y se alinea al inicio
+   - `svh` evita “saltos” del 100vh en móviles con barras dinámicas
 ======================== */
-main {
-  scroll-snap-type: y mandatory; /* snapping vertical */
-}
+main { scroll-snap-type: y mandatory; }
+section { scroll-snap-align: start; height: 100svh; }
 
-section {
-  scroll-snap-align: start; /* cada sección inicia desde arriba */
-  height: 100vh;            /* ocupa toda la pantalla */
+/* ========================
+   Utilities “premium”
+   - Clases reutilizables para glass, glow, grid, etc.
+======================== */
+@layer utilities {
+  /* Efecto glass/blur sutil (nav/cards) */
+  .glass {
+    background: color-mix(in oklab, var(--color-base) 55%, transparent);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid color-mix(in oklab, var(--color-white) 10%, transparent);
+    box-shadow: var(--shadow-cyan);
+  }
+
+  /* Glow de texto verde neón (para detalles) */
+  .text-glow {
+    text-shadow: 0 0 10px color-mix(in oklab, var(--color-neon) 60%, transparent);
+  }
+
+  /* Borde externo con halo neón (para chips/botones) */
+  .outline-neon {
+    box-shadow: 0 0 0 1px color-mix(in oklab, var(--color-neon) 45%, transparent);
+  }
+
+  /* Anillo con glow neón (p.ej. indicadores activos) */
+  .ring-neon {
+    box-shadow:
+      0 0 0 2px color-mix(in oklab, var(--color-neon) 35%, transparent),
+      0 0 18px 2px color-mix(in oklab, var(--color-neon) 30%, transparent);
+  }
+
+  /* Cuadrícula sutil tipo “terminal” para el hero */
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, color-mix(in oklab, var(--color-cyan) 10%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in oklab, var(--color-cyan) 10%, transparent) 1px, transparent 1px);
+    background-size: 36px 36px;
+    background-position: center center;
+  }
 }

@@ -1,66 +1,107 @@
-import { motion } from "framer-motion";
+// src/components/ScrollDots.jsx
+import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 
-function ScrollDots({ sections }) {
-  const [activeSection, setActiveSection] = useState(0);
+/**
+ * Props:
+ *  - sections: Array<{ id: string, label: string }>
+ *  - scrollRootRef: ref al <main> que hace scroll (IntersectionObserver root)
+ *  - offsetTop?: px para compensar navbar fijo
+ */
+export default function ScrollDots({ sections, scrollRootRef, offsetTop = 64 }) {
+  const [activeId, setActiveId] = useState(sections?.[0]?.id ?? null);
 
-  // Detecta en qué sección estamos con IntersectionObserver
   useEffect(() => {
-    const sectionElements = document.querySelectorAll("section");
+    const root = scrollRootRef?.current ?? null;
 
-    const observer = new IntersectionObserver(
+    // 🔑 Buscar los elementos AQUÍ (ya hay DOM)
+    const elements = sections
+      .map((s) => document.getElementById(s.id))
+      .filter(Boolean);
+
+    if (!elements.length) return;
+
+    const io = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const index = Array.from(sectionElements).indexOf(entry.target);
-            setActiveSection(index);
+        // Escoge la sección con mayor ratio visible
+        let top = null;
+        let max = 0;
+        for (const e of entries) {
+          if (e.isIntersecting && e.intersectionRatio >= max) {
+            max = e.intersectionRatio;
+            top = e.target;
           }
-        });
+        }
+        if (top?.id) setActiveId(top.id);
       },
-      { threshold: 0.6 } // activa cuando el 60% de la sección está visible
+      {
+        root, // observa dentro del <main> que scrollea
+        threshold: Array.from({ length: 11 }, (_, i) => i / 10), // 0..1 step 0.1
+        rootMargin: `-${offsetTop}px 0px 0px 0px`,
+      }
     );
 
-    sectionElements.forEach((sec) => observer.observe(sec));
+    elements.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, [sections, scrollRootRef, offsetTop]);
 
-    return () => observer.disconnect();
-  }, []);
-
-  // Scroll suave al hacer clic
-  const scrollToSection = (index) => {
-    const sectionElements = document.querySelectorAll("section");
-    sectionElements[index].scrollIntoView({ behavior: "smooth" });
-  };
+  const go = (id) =>
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 
   return (
-    <div className="fixed right-6 top-1/2 -translate-y-1/2 flex flex-col space-y-4 z-50">
-      {sections.map((sec, i) => (
-        <div key={i} className="relative flex items-center">
-          {/* Tooltip siempre visible en activo, en hover también */}
-          <motion.span
-            initial={{ opacity: 0, x: 10 }}
-            animate={{
-              opacity: activeSection === i ? 1 : 0,
-              x: activeSection === i ? 0 : 10,
-            }}
-            transition={{ duration: 0.3 }}
-            className="absolute right-8 text-sm text-green-400 bg-black px-2 py-1 rounded-md"
-          >
-            {sec}
-          </motion.span>
+    <div className="pointer-events-none fixed right-6 top-1/2 z-[70] -translate-y-1/2 md:right-8">
+      <ul className="flex flex-col items-end gap-3">
+        {sections.map(({ id, label }) => {
+          const active = id === activeId;
+          return (
+            <li key={id} className="relative group">
+              <button
+                onClick={() => go(id)}
+                aria-label={label}
+                aria-current={active ? "true" : undefined}
+                className={[
+                  "pointer-events-auto relative grid place-items-center rounded-full transition-all duration-200",
+                  active
+                    ? "h-4 w-4 border border-[--color-neon] bg-[--color-neon]/20 shadow-[0_0_0_2px_color-mix(in_oklab,var(--color-neon)_35%,transparent),0_0_14px_2px_color-mix(in_oklab,var(--color-neon)_25%,transparent)]"
+                    : "h-3.5 w-3.5 border border-white/20 bg-white/5 hover:scale-110",
+                ].join(" ")}
+              >
+                <motion.span
+                  layoutId="dot-core"
+                  className="h-1.5 w-1.5 rounded-full bg-[--color-neon]"
+                  initial={false}
+                  animate={{
+                    scale: active ? 1 : 0.5,
+                    opacity: active ? 1 : 0.45,
+                  }}
+                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                />
+              </button>
 
-          {/* Punto */}
-          <motion.button
-            onClick={() => scrollToSection(i)}
-            className={`w-4 h-4 rounded-full transition-colors duration-300 ${
-              activeSection === i ? "bg-green-400" : "bg-gray-500"
-            }`}
-            whileHover={{ scale: 1.3 }}
-            whileTap={{ scale: 0.9 }}
-          />
-        </div>
-      ))}
+              {/* Tooltip auto (activo) */}
+              <AnimatePresence>
+                {active && (
+                  <motion.div
+                    key="auto-tip"
+                    initial={{ x: 8, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    exit={{ x: 8, opacity: 0 }}
+                    transition={{ duration: 0.18 }}
+                    className="absolute right-5 top-1/2 -translate-y-1/2 rounded-lg bg-[--color-graphite] px-2.5 py-1.5 text-xs text-white/90 shadow-xl ring-1 ring-white/10 md:right-6"
+                  >
+                    {label}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Tooltip hover (inactivos) */}
+              <div className="absolute right-5 top-1/2 hidden -translate-y-1/2 rounded-lg bg-[--color-graphite] px-2.5 py-1.5 text-xs text-white/90 shadow-xl ring-1 ring-white/10 group-hover:block md:right-6">
+                {label}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 }
-
-export default ScrollDots;
