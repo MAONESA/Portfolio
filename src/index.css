@@ -89,13 +89,26 @@ a:hover { color: var(--color-neon); }
 .container { @apply max-w-6xl mx-auto px-4; }
 
 /* ========================
-   Scroll Snap
-   - `main` define el “snap” vertical obligatorio
-   - Cada `section` ocupa toda la altura visible y se alinea al inicio
-   - `svh` evita “saltos” del 100vh en móviles con barras dinámicas
+   Scroll Snap sólido + anti-rebote
 ======================== */
-main { scroll-snap-type: y mandatory; }
-section { scroll-snap-align: start; height: 100svh; }
+/* Evita “pull-to-refresh”/rebote global */
+html, body { overscroll-behavior-y: none; }
+
+/* El contenedor que scrollea no propaga el rebote al viewport */
+main { 
+  scroll-snap-type: y mandatory;
+  overscroll-behavior: contain;
+}
+
+/* Cada sección ocupa la pantalla y “frena” siempre en su sitio */
+section { 
+  scroll-snap-align: start; 
+  scroll-snap-stop: always;
+  height: 100svh; 
+}
+
+/* Acolchado seguro en iPhone con notch para la última sección */
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
 
 /* ========================
    Utilities “premium”

@@ -31,12 +31,12 @@ function Navbar() {
           >
             ES
           </button>
-          <button
+          {/* <button
             onClick={() => i18n.changeLanguage("en")}
             className="px-3 py-1 text-xs border border-green-400 text-green-400 rounded-md hover:bg-green-400 hover:text-black transition"
           >
             EN
-          </button>
+          </button> */}
         </div>
       </div>
     </nav>
