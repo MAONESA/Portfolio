@@ -21,64 +21,60 @@
 
 /* ========================
    THEME TOKENS (Tailwind v4)
-   - Aquí defines tu paleta y “design tokens”
-   - Se usarán como variables CSS: bg-[--color-base], text-[--color-neon], etc
+   (APLICA A AMBOS: móvil y escritorio)
 ======================== */
 @layer theme {
   @theme {
-    /* Colores de tu estética ciber/hacking */
-    --color-base: #000000;      /* Azul oscuro para el fondo principal */
-    --color-cyan: #00BFFF;      /* Cian/eléctrico para detalles tech */
-    --color-neon: #00FF9D;      /* Verde neón para acentos/highlights */
-    --color-graphite: #2C2C2C;  /* Gris grafito para paneles/cards */
-    --color-white: #FFFFFF;     /* Blanco para tipografía */
+    /* Paleta */
+    --color-base: #000000;      /* fondo global */
+    --color-cyan: #00BFFF;
+    --color-neon: #00FF9D;
+    --color-graphite: #2C2C2C;
+    --color-white: #FFFFFF;
 
-    /* Tipografías por defecto */
+    /* Tipografías */
     --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
-    --font-display: Poppins, var(--font-sans); /* Titulares */
+    --font-display: Poppins, var(--font-sans);
 
-    /* Radios genéricos para redondeos consistentes */
+    /* Radios / sombras */
     --radius-xl: 1rem;
     --radius-2xl: 1.25rem;
-
-    /* Sombras con leve glow (neón/cian) */
     --shadow-neon: 0 0 20px color-mix(in oklab, var(--color-neon) 35%, transparent);
     --shadow-cyan: 0 10px 30px -10px color-mix(in oklab, var(--color-cyan) 25%, transparent);
 
     /* Alturas estándar de cabecera y pie (para safe areas) */
-    --navbar-h: 64px;
-    --footer-h: 56px;
+    --navbar-h: 64px;   /* [ESCRITORIO] navbar ~64px  — en móvil también la usamos como referencia */
+    --footer-h: 56px;   /* [ESCRITORIO] footer ~56px  — en móvil también compensa la home bar */
   }
 }
 
 /* ========================
    ESTILOS GLOBALES (base)
+   (APLICA A AMBOS)
 ======================== */
 @layer base {
-  :root { color-scheme: dark; }                  /* Indica que el esquema es oscuro (mejor contraste) */
+  :root { color-scheme: dark; }
   html, body, #root { height: 100%; width: 100%; }
-  html { scroll-behavior: smooth; }              /* Scroll suave al navegar por anchors */
+  html { scroll-behavior: smooth; }
 
   body {
-    @apply text-white font-sans;                 /* Tailwind utilities para tipografía y color */
-    background: var(--color-base);               /* Usa el color base como fondo */
-    font-family: var(--font-sans);               /* Fuente de texto por defecto */
+    @apply text-white font-sans;
+    background: var(--color-base);
+    font-family: var(--font-sans);
   }
 
-  /* Titulares con Poppins para aire “premium” */
+  /* Titulares (ambos) */
   h1, h2, h3, h4, h5, h6 { font-family: var(--font-display); }
 }
 
 /* ========================
-   Scrollbar oculto (multi navegador)
+   Scrollbar oculto (ambos)
 ======================== */
-::-webkit-scrollbar { display: none; }           /* Chrome/Safari */
-* { scrollbar-width: none; }                     /* Firefox */
+::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+* { scrollbar-width: none; }           /* Firefox */
 
 /* ========================
-   Links
-   - Color blanco por defecto
-   - Cambia a neón en hover
+   Links (ambos)
 ======================== */
 a {
   @apply transition-colors duration-200;
@@ -88,38 +84,40 @@ a:hover { color: var(--color-neon); }
 
 /* ========================
    Helpers de layout
-   - Contenedor centrado con máximo ancho
+   - Contenedor centrado (ambos)
 ======================== */
 .container { @apply max-w-6xl mx-auto px-4; }
 
 /* ========================
    Scroll Snap sólido + anti-rebote
+   - Pensado para el Home “one page”
+   - Funciona en AMBOS, pero el safe-area ayuda sobre todo en [MÓVIL]
 ======================== */
-/* Evita “pull-to-refresh”/rebote global */
+/* Evita “pull-to-refresh”/rebote global — [MÓVIL] */
 html, body { overscroll-behavior-y: none; }
 
-/* El contenedor que scrollea no propaga el rebote al viewport */
+/* El contenedor que scrollea no propaga el rebote — (ambos) */
 main {
   scroll-snap-type: y mandatory;
   overscroll-behavior: contain;
 }
 
-/* Cada sección ocupa la pantalla y “frena” siempre en su sitio */
+/* Cada sección ocupa la pantalla y “frena” — (ambos) */
 section {
   scroll-snap-align: start;
   scroll-snap-stop: always;
-  height: 100svh;
+  height: 100svh; /* [MÓVIL] usa svh para barras dinámicas; en desktop actúa como 100vh */
 }
 
-/* Acolchado seguro en iPhone con notch para la última sección */
+/* Acolchado seguro para la última sección — [MÓVIL] (iPhone con notch) */
 .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
 
 /* ========================
    Utilities “premium”
-   - Clases reutilizables para glass, glow, grid, etc.
+   (salvo que se indique, aplican a AMBOS)
 ======================== */
 @layer utilities {
-  /* Efecto glass/blur sutil (nav/cards) */
+  /* Glass/blur sutil (nav/cards) — ambos */
   .glass {
     background: color-mix(in oklab, var(--color-base) 55%, transparent);
     -webkit-backdrop-filter: blur(10px);
@@ -128,24 +126,24 @@ section {
     box-shadow: var(--shadow-cyan);
   }
 
-  /* Glow de texto verde neón (para detalles) */
+  /* Glow de texto — ambos */
   .text-glow {
     text-shadow: 0 0 10px color-mix(in oklab, var(--color-neon) 60%, transparent);
   }
 
-  /* Borde externo con halo neón (para chips/botones) */
+  /* Borde halo — ambos */
   .outline-neon {
     box-shadow: 0 0 0 1px color-mix(in oklab, var(--color-neon) 45%, transparent);
   }
 
-  /* Anillo con glow neón (p.ej. indicadores activos) */
+  /* Anillo activo — ambos */
   .ring-neon {
     box-shadow:
       0 0 0 2px color-mix(in oklab, var(--color-neon) 35%, transparent),
       0 0 18px 2px color-mix(in oklab, var(--color-neon) 30%, transparent);
   }
 
-  /* Cuadrícula sutil tipo “terminal” para el hero */
+  /* Grid de fondo del hero — [ESCRITORIO] (en móvil lo solemos ocultar por perf) */
   .bg-grid {
     background-image:
       linear-gradient(to right, color-mix(in oklab, var(--color-cyan) 10%, transparent) 1px, transparent 1px),
@@ -155,11 +153,11 @@ section {
   }
 
   /* ========= Safe areas iOS para nav/footers fijos ========= */
-  /* Compensa la barra superior fija (nav) + notch */
+  /* Compensa la barra superior fija (nav) + notch — [MÓVIL] */
   .pt-navbar-safe {
     padding-top: calc(var(--navbar-h) + env(safe-area-inset-top, 0px));
   }
-  /* Compensa el footer fijo + “home bar” iOS */
+  /* Compensa el footer fijo + “home bar” iOS — [MÓVIL] */
   .pb-footer-safe {
     padding-bottom: calc(var(--footer-h) + env(safe-area-inset-bottom, 0px));
   }

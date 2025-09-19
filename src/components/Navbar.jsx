@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
+/* Iconos mínimos (sin dependencias) */
 function IconMenu({ className = "w-6 h-6" }) {
   return (
     <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor">
@@ -21,15 +22,21 @@ export default function Navbar() {
   const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(false);
 
+  // Bloquea el scroll del body cuando el panel móvil está abierto
+  useEffect(() => {
+    document.documentElement.style.overflow = open ? "hidden" : "";
+    return () => { document.documentElement.style.overflow = ""; };
+  }, [open]);
+
   const NavLinks = ({ onClick }) => (
     <>
-      <Link to="/"          onClick={onClick} className="hover:text-green-400 transition">{t("home")}</Link>
-      <Link to="/projects"  onClick={onClick} className="hover:text-green-400 transition">{t("projects")}</Link>
-      <Link to="/labs"      onClick={onClick} className="hover:text-green-400 transition">{t("labs")}</Link>
-      <Link to="/certifications" onClick={onClick} className="hover:text-green-400 transition">{t("certifications")}</Link>
-      <Link to="/skills"    onClick={onClick} className="hover:text-green-400 transition">{t("skills")}</Link>
-      <Link to="/blog"      onClick={onClick} className="hover:text-green-400 transition">{t("blog")}</Link>
-      <Link to="/contact"   onClick={onClick} className="hover:text-green-400 transition">{t("contact")}</Link>
+      <Link to="/"              onClick={onClick} className="hover:text-green-400 transition">{t("home")}</Link>
+      <Link to="/projects"      onClick={onClick} className="hover:text-green-400 transition">{t("projects")}</Link>
+      <Link to="/labs"          onClick={onClick} className="hover:text-green-400 transition">{t("labs")}</Link>
+      <Link to="/certifications"onClick={onClick} className="hover:text-green-400 transition">{t("certifications")}</Link>
+      <Link to="/skills"        onClick={onClick} className="hover:text-green-400 transition">{t("skills")}</Link>
+      <Link to="/blog"          onClick={onClick} className="hover:text-green-400 transition">{t("blog")}</Link>
+      <Link to="/contact"       onClick={onClick} className="hover:text-green-400 transition">{t("contact")}</Link>
     </>
   );
 
@@ -41,12 +48,12 @@ export default function Navbar() {
           David Sandoval
         </Link>
 
-        {/* Desktop links */}
+        {/* Links desktop */}
         <div className="hidden md:flex items-center space-x-8 text-sm font-medium">
           <NavLinks />
         </div>
 
-        {/* Idioma (desktop) */}
+        {/* Idioma desktop */}
         <div className="hidden md:flex space-x-2 ml-4">
           <button
             onClick={() => i18n.changeLanguage("es")}
@@ -54,13 +61,7 @@ export default function Navbar() {
           >
             ES
           </button>
-          {/* si quieres EN, destapa: 
-          <button
-            onClick={() => i18n.changeLanguage("en")}
-            className="px-3 py-1 text-xs border border-green-400 text-green-400 rounded-md hover:bg-green-400 hover:text-black transition"
-          >
-            EN
-          </button> */}
+          {/* EN opcional */}
         </div>
 
         {/* Botón móvil */}
@@ -73,13 +74,13 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Panel móvil */}
+      {/* Panel móvil tipo sheet */}
       {open && (
-        <div className="md:hidden fixed inset-0 z-[60]">
-          {/* fondo */}
+        <div className="md:hidden fixed inset-0 z-[60]" role="dialog" aria-modal="true">
+          {/* Overlay */}
           <div className="absolute inset-0 bg-black/60" onClick={() => setOpen(false)} />
-          {/* sheet */}
-          <div className="absolute right-0 top-0 h-full w-[min(85vw,320px)] bg-black/80 backdrop-blur-md border-l border-white/10 p-5 flex flex-col gap-4">
+          {/* Sheet */}
+          <div className="absolute right-0 top-0 h-full w-[min(85vw,340px)] bg-black/80 backdrop-blur-md border-l border-white/10 p-6 flex flex-col gap-5">
             <div className="flex items-center justify-between">
               <span className="text-green-400 font-semibold">Menú</span>
               <button aria-label="Cerrar menú" onClick={() => setOpen(false)} className="p-2 text-white/90 hover:text-green-400 transition">
@@ -87,7 +88,8 @@ export default function Navbar() {
               </button>
             </div>
 
-            <div className="mt-2 flex flex-col gap-3 text-sm font-medium">
+            {/* Enlaces grandes, cómodos para el pulgar */}
+            <div className="mt-1 flex flex-col gap-3 text-lg font-medium">
               <NavLinks onClick={() => setOpen(false)} />
             </div>
 
@@ -98,7 +100,6 @@ export default function Navbar() {
               >
                 ES
               </button>
-              {/* EN opcional */}
             </div>
           </div>
         </div>
