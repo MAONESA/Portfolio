@@ -1,17 +1,39 @@
-// Página de inicio con CTAs arriba y más certificaciones en desktop
+// Página de inicio (desktop-first) usando helpers de index.css
 import { useRef, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+
 import Sectiontitle from "../components/Sectiontitle";
 import ScrollDots from "../components/ScrollDots";
 import useIsMobile from "../hooks/useIsMobile";
-import { BadgeCheck } from "lucide-react";
+import CertificationCard from "../components/CertificationCard";
+import ReviewsSection from "../components/ReviewsSection";
+import AboutAvatar from "../components/AboutAvatar";
 
 export default function Home() {
   const scrollRef = useRef(null);
   const isMobile = useIsMobile();
 
-  // Secciones (por ahora sin trayectoria en móvil como acordamos)
+  const certifications = [
+    {
+      title:
+        "Microsoft Certified: Security, Compliance and Identity Fundamentals (SC-900)",
+      year: "2024",
+      href:
+        "https://www.credly.com/badges/e114d94e-5b21-4b71-b528-88c8d09a1497/linked_in_profile",
+    },
+    {
+      title: "Microsoft Certified: Azure Fundamentals (AZ-900)",
+      year: "2023",
+      href:
+        "https://www.credly.com/badges/ad83804b-ab6c-4b2b-857c-763644083fc8/linked_in_profile",
+    },
+    !isMobile && { title: "Google Cybersecurity (Coursera)", year: "2024" },
+    !isMobile && { title: "TryHackMe: Advent of Cyber (badge)", year: "2023" },
+    !isMobile && { title: "TryHackMe: Advent of Cyber (badge)", year: "2023" },
+    !isMobile && { title: "TryHackMe: Advent of Cyber (badge)", year: "2023" },
+  ].filter(Boolean);
+
   const sections = useMemo(
     () =>
       isMobile
@@ -19,69 +41,72 @@ export default function Home() {
             { id: "home", label: "Home" },
             { id: "about", label: "About" },
             { id: "certifications", label: "Certificaciones" },
+            { id: "reviews", label: "Opiniones" },
           ]
         : [
             { id: "home", label: "Home" },
             { id: "about", label: "About" },
             { id: "trajectory", label: "Trayectoria" },
             { id: "certifications", label: "Certificaciones" },
+            { id: "reviews", label: "Opiniones" },
           ],
     [isMobile]
   );
 
   return (
     <div className="relative">
-      {/* Dots laterales — ocultos en móvil */}
       <ScrollDots
         sections={sections}
         scrollRootRef={scrollRef}
         offsetTop={64}
         isMobile={isMobile}
-        hidden={isMobile}
+        hidden={false}
       />
 
       <main
         ref={scrollRef}
         className="snap-y snap-mandatory h-svh w-full overflow-y-scroll overflow-x-hidden touch-pan-y overscroll-y-none"
       >
-        {/* =================== HOME =================== */}
-        <section id="home" className="relative h-svh w-full snap-start md:[&>.container]:-mt-6">
-
+        {/* ========= HERO ========= */}
+        <section id="home" className="relative h-svh w-full snap-start">
           {!isMobile && (
             <div className="pointer-events-none absolute inset-0 bg-grid opacity-20 [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]" />
           )}
 
-          <div className={`container ${isMobile ? "pt-navbar-safe" : ""} h-full flex flex-col items-center justify-center text-center px-6`}>
+          <div className="section-shell h-full flex flex-col items-center justify-center text-center">
             <motion.h1
-              className={`font-bold ${isMobile ? "text-4xl" : "text-5xl md:text-6xl"}`}
+              className={`hero-title font-bold ${isMobile ? "text-4xl" : "text-5xl md:text-6xl"}`}
               initial={{ opacity: 0, y: -20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, ease: "easeOut" }}
             >
-              David <span className="text-[--color-neon] text-glow">Sandoval</span>
+              <span className="hero-first">David</span>{" "}
+              <span className="hero-last-flat">Sandoval</span>
             </motion.h1>
 
             <motion.p
-              className={`mt-3 text-white/70 ${isMobile ? "text-base" : "md:text-lg"}`}
+              className="mt-3 flex items-center justify-center gap-2 text-lg md:text-xl"
               initial={{ opacity: 0, y: 8 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.05 }}
             >
-              Ciberseguridad & Web Developer
+              <span className="hero-key hero-key--secPurple">Ciberseguridad</span>
+              <span className="text-white/45">&amp;</span>
+              <span className="hero-key hero-key--devAmber">Web Developer</span>
             </motion.p>
 
-            {/* === CTAs arriba con TODAS las secciones del inicio === */}
             <motion.div
               className="mt-6 flex flex-wrap items-center justify-center gap-3"
               initial={{ opacity: 0, y: 8 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.1 }}
             >
-              <a href="#about" className="rounded-2xl border border-white/15 bg-white/5 px-5 py-2 font-medium text-white/90 hover:border-white/25">
+              <a
+                href="#about"
+                className="rounded-2xl border border-white/15 bg-white/5 px-5 py-2 font-medium text-white/90 hover:border-white/25"
+              >
                 Sobre mí
               </a>
-
-              {/* Trayectoria solo desktop de momento */}
               {!isMobile && (
                 <a
                   href="#trajectory"
@@ -90,49 +115,59 @@ export default function Home() {
                   Trayectoria
                 </a>
               )}
-
               <a
                 href="#certifications"
                 className="rounded-2xl border border-white/15 bg-white/5 px-5 py-2 font-medium text-white/90 hover:border-white/25"
               >
                 Certificaciones
               </a>
+              <a
+                href="#reviews"
+                className="rounded-2xl border border-white/15 bg-white/5 px-5 py-2 font-medium text-white/90 hover:border-white/25"
+              >
+                Opiniones
+              </a>
             </motion.div>
           </div>
         </section>
 
-        {/* =================== ABOUT =================== */}
+        {/* ========= ABOUT ========= */}
         <section id="about" className="h-svh w-full snap-start">
-          <div
-            className={`container ${isMobile ? "pt-navbar-safe" : ""} h-full grid items-center gap-8 ${
-              isMobile ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2"
-            }`}
-          >
-            {/* Texto */}
-            <div className="min-w-0 space-y-4 md:-mt-2">{/* leve subida del bloque en desktop */}
-              <Sectiontitle title="Sobre mí" />
-              <h2 className={`${isMobile ? "text-3xl" : "text-4xl md:text-5xl"} font-bold`}>Quién soy</h2>
-              <p className="text-white/70 max-w-prose">
-                Graduado en Ciberseguridad en Entornos TI (CETI). Experiencia en desarrollo web,
-                administración de sistemas y soporte técnico. Conocimiento de marcos como GDPR,
-                DORA, ISO 27001/31000/19601/37001 y ENS.
-              </p>
+          <div className="section-shell about-grid grid h-full content-start gap-8 md:grid-cols-2">
+            <div className="min-w-0">
+              <div className="section-head">
+                {/* Este sobre-título pinta con el mismo --accent */}
+                <Sectiontitle title="Sobre mí" />
+                <h2 className="section-title text-4xl md:text-5xl">Quién soy</h2>
+                <p className="section-subtitle">
+                  Graduado en Ciberseguridad en Entornos TI (CETI). Experiencia en
+                  desarrollo web, administración de sistemas y soporte técnico.
+                  Conocimiento de marcos como GDPR, DORA, ISO 27001/31000/19601/37001 y ENS.
+                </p>
+              </div>
 
-              <div className="flex flex-wrap gap-2 pt-1">
+              <div className="section-body flex flex-wrap gap-2">
                 {(isMobile
                   ? ["React", "TailwindCSS", "JavaScript", "Python"]
-                  : ["React", "TailwindCSS", "JavaScript", "Python", "Bash", "Kali Linux", "Wireshark", "SQL Injection", "Java", "SpringBoot", "Debian"]
+                  : [
+                      "React","TailwindCSS","JavaScript","Python","Bash","Kali Linux",
+                      "Wireshark","SQL Injection","Java","SpringBoot","Debian"
+                    ]
                 ).map((tag) => (
-                  <span key={tag} className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/80">
+                  <span
+                    key={tag}
+                    className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/80"
+                  >
                     {tag}
                   </span>
                 ))}
               </div>
 
-              <div className="flex flex-wrap items-center gap-3 pt-1">
+              <div className="section-footer flex flex-wrap items-center gap-3">
                 <a
                   href="/cv.pdf"
-                  download="David-Sandoval-CV.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded-2xl border border-white/15 bg-white/5 px-5 py-2.5 font-medium text-white/90 hover:border-white/25 transition active:translate-y-[1px] focus:outline-none focus:ring-2 focus:ring-white/30"
                 >
                   <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -153,143 +188,82 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Foto: oculta en móvil por ahora */}
-            <div className="hidden md:flex justify-center">
-              <div className="relative size-56 md:size-72 rounded-full bg-[--color-graphite] ring-2 ring-white/10 shadow-[var(--shadow-cyan)] overflow-hidden">
-                <img src="/profile.jpg" alt="David Sandoval" className="size-full object-cover" />
-              </div>
+            {/* Envoltura para alinear el avatar con el texto */}
+            <div className="about-avatar">
+              <AboutAvatar />
             </div>
           </div>
         </section>
 
-{/* ============ TRAYECTORIA (desktop) — estilo original ============ */}
-{!isMobile && (
-  <section id="trajectory" className="h-svh w-full snap-start">
-    <div className="container h-full flex flex-col justify-center">
-      <Sectiontitle title="Trayectoria" />
-      <h2 className="text-4xl md:text-5xl font-bold">Formación y experiencia</h2>
-      <p className="mt-2 text-white/70 max-w-prose">
-        Un recorrido por mi formación y algunos hitos profesionales.
-      </p>
-
-      {/* Grid horizontal de hitos, con “dot” neón y año subrayado (como antes) */}
-      <div className="mt-10 grid grid-cols-1 gap-8 md:grid-cols-5">
-        {[
-          { years: "2019–2021", title: "CFGS DAW — Escola Ginebró" },
-          { years: "2019",      title: "Desarrollador Front-End — Mproducts" },
-          { years: "2022–2023", title: "CFGS ASIR — Institut Lliçà d’Amunt" },
-          { years: "2023–2024", title: "Bootcamps (Full-Stack / Ciber & EH)" },
-          { years: "2024–2025", title: "CETI Ciberseguridad — Monlau FP" },
-        ].map((item, i) => (
-          <div key={i} className="relative">
-            {/* Línea con “dot” neón + año subrayado */}
-            <div className="flex items-center gap-3 text-white/70">
-              <div className="grid size-6 place-items-center rounded-full bg-[--color-neon]/10 ring-neon">
-                <div className="size-2 rounded-full bg-[--color-neon]" />
+        {/* ========= TRAYECTORIA (solo desktop) ========= */}
+        {!isMobile && (
+          <section id="trajectory" className="h-svh w-full snap-start">
+            <div className="section-shell h-full flex flex-col justify-start">
+              <div className="section-head">
+                <Sectiontitle title="Trayectoria" />
+                <h2 className="section-title text-4xl md:text-5xl">Formación y experiencia</h2>
+                <p className="section-subtitle">
+                  Un recorrido por mi formación y algunos hitos profesionales.
+                </p>
               </div>
-              <div className="font-semibold tracking-wide">{item.years}</div>
+
+              {/* Layout recto (sin “S”) */}
+              <div className="section-body grid gap-10 md:grid-cols-5">
+                {[
+                  { title: "CFGS DAW — Escola Ginebró", years: "2019–2021" },
+                  { title: "Desarrollador Front-End — Mproducts", years: "2019" },
+                  { title: "CFGS ASIR — Institut Lliçà d’Amunt", years: "2022–2023" },
+                  { title: "Bootcamps (Full-Stack / Ciber & EH)", years: "2023–2024" },
+                  { title: "CETI Ciberseguridad — Monlau FP", years: "2024–2025" },
+                  { title: "Ingeniería Informática", years: "Próximamente (2026)", soon: true },
+                ].map((s, idx) => (
+                  <div key={s.title + idx}>
+                    <div className="flex items-center gap-3 text-white/70">
+                      <span className="size-3 rounded-full bg-[--color-neon] shadow-[0_0_12px_2px_rgba(0,255,157,.35)]" />
+                      <span className="text-sm">
+                        {s.years} {s.soon && <span className="pill ml-2">Próximamente</span>}
+                      </span>
+                    </div>
+                    <div className="mt-2 border-t border-white/15 pt-3 font-semibold">
+                      {s.title}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="mt-2 h-[2px] w-full bg-white/10" />
+          </section>
+        )}
 
-            {/* Título del hito */}
-            <div className="mt-4 text-xl font-semibold leading-snug">
-              {item.title}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-)}
-
-
-        {/* ================= CERTIFICACIONES ================= */}
+        {/* ========= CERTIFICACIONES ========= */}
         <section id="certifications" className="h-svh w-full snap-start">
-          <div className="container h-full flex flex-col justify-center pb-footer-safe md:-mt-2">
-            <Sectiontitle title="Certificaciones" />
-            <h2 className={`${isMobile ? "text-3xl" : "text-4xl md:text-5xl"} font-bold`}>Credenciales</h2>
-
-            <div
-              className={`mt-6 grid gap-4 ${
-                isMobile ? "grid-cols-1" : "grid-cols-2 lg:grid-cols-2"
-              }`}
-            >
-              {/* SC-900 */}
-              <div className="glass rounded-2xl p-4">
-                <div className="flex items-center gap-3">
-                  <BadgeCheck className="size-5 text-[--color-neon]" />
-                  <a
-                    href="https://www.credly.com/badges/e114d94e-5b21-4b71-b528-88c8d09a1497/linked_in_profile"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:underline"
-                  >
-                    <div>
-                      <div className="font-semibold">
-                        Microsoft Certified: Security, Compliance and Identity Fundamentals (SC-900)
-                      </div>
-                      <div className="text-sm text-white/60">2024</div>
-                    </div>
-                  </a>
-                </div>
-              </div>
-
-              {/* AZ-900 */}
-              <div className="glass rounded-2xl p-4">
-                <div className="flex items-center gap-3">
-                  <BadgeCheck className="size-5 text-[--color-neon]" />
-                  <a
-                    href="https://www.credly.com/badges/ad83804b-ab6c-4b2b-857c-763644083fc8/linked_in_profile"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:underline"
-                  >
-                    <div>
-                      <div className="font-semibold">Microsoft Certified: Azure Fundamentals (AZ-900)</div>
-                      <div className="text-sm text-white/60">2023</div>
-                    </div>
-                  </a>
-                </div>
-              </div>
-
-              {/* Extra desktop 1 (placeholder o sustituye cuando tengas badge) */}
-              {!isMobile && (
-                <div className="glass rounded-2xl p-4">
-                  <div className="flex items-center gap-3">
-                    <BadgeCheck className="size-5 text-[--color-neon]" />
-                    <div>
-                      <div className="font-semibold">Google Cybersecurity (Coursera)</div>
-                      <div className="text-sm text-white/60">2024</div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Extra desktop 2 (placeholder) */}
-              {!isMobile && (
-                <div className="glass rounded-2xl p-4">
-                  <div className="flex items-center gap-3">
-                    <BadgeCheck className="size-5 text-[--color-neon]" />
-                    <div>
-                      <div className="font-semibold">TryHackMe: Advent of Cyber (badge)</div>
-                      <div className="text-sm text-white/60">2023</div>
-                    </div>
-                  </div>
-                </div>
-              )}
+          <div className="section-shell h-full flex flex-col justify-start">
+            <div className="section-head">
+              <Sectiontitle title="Certificaciones" />
+              <h2 className="section-title text-4xl md:text-5xl">Credenciales</h2>
             </div>
 
-            {/* CTA Ver todas */}
-            <div className="mt-6">
-              <Link
-                to="/certifications"
-                className="rounded-2xl border border-white/15 bg-white/5 px-5 py-2.5 font-medium text-white/90 hover:border-white/25"
-              >
-                Ver todas
-              </Link>
+            <div className="section-body grid gap-4 md:grid-cols-2">
+              {certifications.map((c, i) => (
+                <CertificationCard key={`${c.title}-${i}`} {...c} />
+              ))}
             </div>
+
+            {!isMobile && (
+              <div className="section-footer">
+                <Link
+                  to="/certifications"
+                  className="rounded-2xl border border-white/15 bg-white/5 px-5 py-2.5 font-medium text-white/90 hover:border-white/25"
+                >
+                  Ver todas
+                </Link>
+              </div>
+            )}
+            
           </div>
         </section>
+
+        {/* ========= OPINIONES ========= */}
+        <ReviewsSection />
       </main>
     </div>
   );

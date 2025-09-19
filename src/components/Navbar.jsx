@@ -34,9 +34,9 @@ export default function Navbar() {
       <Link to="/projects"      onClick={onClick} className="hover:text-green-400 transition">{t("projects")}</Link>
       <Link to="/labs"          onClick={onClick} className="hover:text-green-400 transition">{t("labs")}</Link>
       <Link to="/certifications"onClick={onClick} className="hover:text-green-400 transition">{t("certifications")}</Link>
-      <Link to="/skills"        onClick={onClick} className="hover:text-green-400 transition">{t("skills")}</Link>
+      {/* <Link to="/skills"        onClick={onClick} className="hover:text-green-400 transition">{t("skills")}</Link> */}
       <Link to="/blog"          onClick={onClick} className="hover:text-green-400 transition">{t("blog")}</Link>
-      <Link to="/contact"       onClick={onClick} className="hover:text-green-400 transition">{t("contact")}</Link>
+      {/* <Link to="/contact"       onClick={onClick} className="hover:text-green-400 transition">{t("contact")}</Link> */}
     </>
   );
 
